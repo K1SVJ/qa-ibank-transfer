@@ -10,9 +10,8 @@
 - JUnit 5
 - GitHub Actions (CI)
 
-
-
 ## Запуск тестов
+
 ```bash
 ./gradlew test -Dselenide.headless=true
 
