@@ -15,3 +15,6 @@
 ## Запуск тестов
 ```bash
 ./gradlew test -Dselenide.headless=true
+
+Обнаруженные баги
+https://github.com/K1SVJ/qa-ibank-transfer/issues/1
