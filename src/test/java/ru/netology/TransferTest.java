@@ -1,5 +1,6 @@
 package ru.netology;
 
+import com.codeborne.selenide.Selenide;
 import org.junit.jupiter.api.Test;
 import ru.netology.pages.CardsListPage;
 import ru.netology.pages.LoginPage;
@@ -37,14 +38,24 @@ public class TransferTest {
         TransferPage transfer = cards.selectCardForTopUp(SECOND_CARD);
         CardsListPage after = transfer.transfer(FIRST_CARD, String.valueOf(TRANSFER_AMOUNT));
 
-        long firstAfter = after.getBalanceByCardNumber(FIRST_CARD);
-        long secondAfter = after.getBalanceByCardNumber(SECOND_CARD);
+
+        long firstAfter = 0, secondAfter = 0;
+        long deadline = System.currentTimeMillis() + 10000;
+        do {
+            firstAfter = after.getBalanceByCardNumber(FIRST_CARD);
+            secondAfter = after.getBalanceByCardNumber(SECOND_CARD);
+            if (firstAfter == firstBefore - TRANSFER_AMOUNT
+                    && secondAfter == secondBefore + TRANSFER_AMOUNT) {
+                break;
+            }
+            Selenide.sleep(500);
+        } while (System.currentTimeMillis() < deadline);
 
         System.out.println("=== БАЛАНСЫ ПОСЛЕ ПЕРЕВОДА ===");
         System.out.println("Первая карта: " + firstAfter + " (ожидалось: " + (firstBefore - TRANSFER_AMOUNT) + ")");
         System.out.println("Вторая карта: " + secondAfter + " (ожидалось: " + (secondBefore + TRANSFER_AMOUNT) + ")");
 
-        assertEquals(firstBefore - TRANSFER_AMOUNT, firstAfter, "Баланс первой карты должен уменьшиться на " + TRANSFER_AMOUNT);
-        assertEquals(secondBefore + TRANSFER_AMOUNT, secondAfter, "Баланс второй карты должен увеличиться на " + TRANSFER_AMOUNT);
+        assertEquals(firstBefore - TRANSFER_AMOUNT, firstAfter, "Баланс первой карты должен уменьшиться");
+        assertEquals(secondBefore + TRANSFER_AMOUNT, secondAfter, "Баланс второй карты должен увеличиться");
     }
 }
